@@ -1,0 +1,52 @@
+{% extends 'Admin/adminBase.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <h1>Oczekujące rezerwacje</h1>
+
+    {% set index = 0 %}
+    {% for reservation in notRentedReservations %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p>Imię i nazwisko czytelnika rezerwującego: <strong>{{ reservation.readerId.name }} {{ reservation.readerId.surname }}</strong></p>
+                <p>Pozostała liczba rezerwacji: <strong>{{ reservation.readerId.reservationsQuantity }}</strong></p>
+                <p>Tytuł książki zarezerwowanej: <strong>{{ reservation.bookId.name }}</strong></p>
+                <p>Pozostała ilość książek na stanie: {{ reservation.bookId.quantity }}</p>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminConfirmReservation', {'reservationId': reservation.id}) }}">Zatwierdź rezerwacje (wypożycz książkę na 7 dni)</a>
+                <a class="btn btn-outline-danger my-2" href="{{ path('adminCancelReservation', {'reservationId': reservation.id}) }}">Usuń rezerwacje</a>
+            </li>
+        </ul>
+
+        {% set index = index + 1 %}
+    {% endfor %}
+
+    <h1>Zatwierdzone rezerwacje</h1>
+
+    {% set reservationIndex = 0 %}
+    {% for reservation in rentedReservations %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p>Imię i nazwisko czytelnika rezerwującego: <strong>{{ reservation.readerId.name }} {{ reservation.readerId.surname }}</strong></p>
+                <p>Pozostała liczba rezerwacji: <strong>{{ reservation.readerId.reservationsQuantity }}</strong></p>
+                <p>Tytuł książki zarezerwowanej: <strong>{{ reservation.bookId.name }}</strong></p>
+                <p>Pozostała ilość książek na stanie: {{ reservation.bookId.quantity }}</p>
+            </li>
+        </ul>
+
+        {% set reservationIndex = reservationIndex + 1 %}
+    {% endfor %}
+
+{% endblock %}

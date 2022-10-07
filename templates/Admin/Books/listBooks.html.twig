@@ -1,0 +1,53 @@
+{% extends 'Admin/adminBase.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <h1>Dostępne książki</h1>
+
+    {% set index = 0 %}
+    {% for book in availableBooks %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p>Nazwa książki: <strong>{{ book.name }}</strong></p>
+                <p>Autor książki: <strong>{{ book.author }}</strong></p>
+                <p>Opis książki: <strong>{{ book.description }}</strong></p>
+                <p>Ilość książek na stanie: {{ book.quantity }}</p>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminEditBook', {'id': book.id}) }}">Edytuj</a>
+                <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteBook', {'id': book.id}) }}">Usuń</a>
+            </li>
+        </ul>
+
+        {% set index = index + 1 %}
+    {% endfor %}
+
+    <h1>Nie dostępne książki</h1>
+
+    {% set index = 0 %}
+    {% for book in unavailableBooks %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p>Nazwa książki: <strong>{{ book.name }}</strong></p>
+                <p>Autor książki: <strong>{{ book.author }}</strong></p>
+                <p>Opis książki: <strong>{{ book.description }}</strong></p>
+                <p>Ilość książek na stanie: {{ book.quantity }}</p>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminEditBook', {'id': book.id}) }}">Edytuj</a>
+                <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteBook', {'id': book.id}) }}">Usuń</a>
+            </li>
+        </ul>
+
+        {% set index = index + 1 %}
+    {% endfor %}
+{% endblock %}

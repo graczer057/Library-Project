@@ -1,0 +1,51 @@
+{% extends 'Admin/adminBase.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <h1>Bieżące wypożyczenia</h1>
+
+    {% set index = 0 %}
+    {% for rent in actualRent %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p>Imię i nazwisko czytelnika wypożyczającego: <strong>{{ rent.reservationId.readerId.name }} {{ rent.reservationId.readerId.surname }}</strong></p>
+                <p>Tytuł książki wypożyczonej: <strong>{{ rent.reservationId.bookId.name }}</strong></p>
+                <p>Ostateczna data oddania książki: <strong>{{ rent.expireDate|date('H:i d-m-Y') }}</strong></p>
+                <p>Czy książka została oddana: <strong>Nie</strong></p>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminReturnedRentedBook', {'rentId': rent.id}) }}">Potwierdź zwrócenie książki przez ucznia</a>
+            </li>
+        </ul>
+
+        {% set index = index + 1 %}
+    {% endfor %}
+
+    <h1>Przeterminowane wypożyczenia</h1>
+
+    {% set rentIndex = 0 %}
+    {% for rent in expiredRent %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p>Imię i nazwisko czytelnika wypożyczającego: <strong>{{ rent.reservationId.readerId.name }} {{ rent.reservationId.readerId.surname }}</strong></p>
+                <p>Tytuł książki wypożyczonej: <strong>{{ rent.reservationId.bookId.name }}</strong></p>
+                <p>Ostateczna data oddania książki: <strong>{{ rent.expireDate|date('H:i d-m-Y') }}</strong></p>
+                <p>Czy książka została oddana: <strong>Nie</strong></p>
+            </li>
+        </ul>
+
+        {% set rentIndex = rentIndex + 1 %}
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'Admin/adminBase.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success')%}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error')%}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <section>
+        <div class="container px-4">
+            <div class="row gx-4 justify-content-center">
+                <div class="col-lg-8">
+                    <h2>Dodaj nową książkę</h2>
+                    <p class="lead">W celu dodania nowej książki, prosimy o wypełnienie poniższego formularza</p>
+                    <div class="col-8 mx-auto mt-5">
+                        {{ form_start(form,{'attr':{'class':'form-material m-t-40'}}) }}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

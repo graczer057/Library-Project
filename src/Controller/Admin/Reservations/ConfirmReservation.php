@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Admin\Reservations;
+
+use App\Entity\Books\Rents;
+use App\Repository\Books\ReservationsRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class ConfirmReservation extends AbstractController
+{
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ReservationsRepository $reservationsRepository
+    ) {
+
+    }
+
+    #[Route('/admin/reservation/confirm/{reservationId}', name: 'adminConfirmReservation', methods: ['GET', 'POST'])]
+    public function confirm(int $reservationId): Response
+    {
+        $specificReservation = $this->reservationsRepository->findOneBy(['id' => $reservationId]);
+
+        if (!$specificReservation) {
+            $this->addFlash('error', 'Przykro nam, ale podana rezerwacja nie istnieje.');
+
+            return $this->redirectToRoute('adminListReservation');
+        }
+
+        $newRent = new Rents(
+            $specificReservation
+        );
+
+        $specificReservation->setIsRented(true);
+
+        $this->entityManager->persist($newRent);
+        $this->entityManager->persist($specificReservation);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Pomyślnie wypożyczono książkę');
+
+        return $this->redirectToRoute('adminListReservation');
+    }
+}

@@ -1,0 +1,88 @@
+{% extends 'Reader/readerBase.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                {% set index = 0 %}
+                {% for book in books %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ book.name }}</h5>
+                                    <!-- Product price-->
+                                    <p><strong>{{ book.author }}</strong></p>
+                                    <p>{{ book.description }}</p>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                {% set reservationStatus = false %}
+                                {% for reservation in reservations %}
+                                    {% if reservation.bookId.id == book.id %}
+                                        {% set reservationStatus = true %}
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                {% set value = false %}
+                                {% set rentDate = false %}
+                                {% for rent in rentInfo %}
+                                    {% if rent.reservationId.bookId.id == book.id %}
+                                        {% set value = true %}
+                                        {% set rentDate = rent.expireDate|date('H:i d-m-Y') %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if value == true %}
+                                    <div class="text-center"><a class="btn btn-success mt-auto">Książka została
+                                            wypożyczona</a>
+                                        <p>Ostateczna data oddania książki: <strong>{{ rentDate }}</strong></p>
+                                    </div>
+                                {% else %}
+                                    {% if (book.quantity <= 0 or reader.reservationsQuantity == 0) and reservationStatus == false %}
+                                        <div class="text-center"><a class="btn btn-danger mt-auto">Nie można
+                                                zarezerwować</a>
+                                            <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
+                                        </div>
+                                    {% elseif reservationStatus == true %}
+                                        <div class="text-center"><a class="btn btn-outline-danger mt-auto"
+                                                                    href="{{ path('readerCancelReservation', {'bookId': book.id}) }}">Anuluj
+                                                rezerwacje</a>
+                                            <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center"><a class="btn btn-outline-info mt-auto"
+                                                                    href="{{ path('readerCreateReservation', {'bookId': book.id}) }}">Zarezerwuj</a>
+                                            <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% set index = index + 1 %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
