@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Reservations;
 
-use App\Entity\Books\Rents;
-use App\Repository\Books\ReservationsRepository;
+use App\Entity\Books\Rent;
+use App\Repository\Books\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,7 @@ class ConfirmReservation extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ReservationsRepository $reservationsRepository
+        private readonly ReservationRepository $reservationsRepository
     ) {
 
     }
@@ -31,7 +31,7 @@ class ConfirmReservation extends AbstractController
             return $this->redirectToRoute('adminListReservation');
         }
 
-        $newRent = new Rents(
+        $newRent = new Rent(
             $specificReservation
         );
 

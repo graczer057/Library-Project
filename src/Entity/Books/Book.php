@@ -2,13 +2,13 @@
 
 namespace App\Entity\Books;
 
-use App\Repository\Books\BooksRepository;
+use App\Repository\Books\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BooksRepository::class)]
-class Books
+#[ORM\Entity(repositoryClass: BookRepository::class)]
+class Book
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,7 +27,7 @@ class Books
     #[ORM\Column]
     private ?int $quantity = null;
 
-    #[ORM\OneToMany(mappedBy: 'bookId', targetEntity: Reservations::class)]
+    #[ORM\OneToMany(mappedBy: 'bookId', targetEntity: Reservation::class)]
     private Collection $reservations;
 
     public function __construct(
@@ -97,14 +97,14 @@ class Books
     }
 
     /**
-     * @return Collection<int, Reservations>
+     * @return Collection<int, Reservation>
      */
     public function getReservations(): Collection
     {
         return $this->reservations;
     }
 
-    public function addReservation(Reservations $reservation): self
+    public function addReservation(Reservation $reservation): self
     {
         if (!$this->reservations->contains($reservation)) {
             $this->reservations->add($reservation);
@@ -114,7 +114,7 @@ class Books
         return $this;
     }
 
-    public function removeReservation(Reservations $reservation): self
+    public function removeReservation(Reservation $reservation): self
     {
         if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)

@@ -2,14 +2,14 @@
 
 namespace App\Entity\Users;
 
-use App\Repository\Users\UsersRepository;
+use App\Repository\Users\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: UsersRepository::class)]
-class Users implements UserInterface, PasswordAuthenticatedUserInterface
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -32,10 +32,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isActive;
 
     #[ORM\OneToOne(mappedBy: 'userId', cascade: ['persist', 'remove'])]
-    private ?Admins $admins = null;
-
-    #[ORM\OneToOne(mappedBy: 'userId', cascade: ['persist', 'remove'])]
-    private ?Readers $readers = null;
+    private ?Reader $readers = null;
 
     #[ORM\Column]
     private ?bool $isBanned = null;
@@ -142,34 +139,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         }
     }
 
-    public function getAdmins(): ?Admins
-    {
-        return $this->admins;
-    }
-
-    public function setAdmins(?Admins $admins): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($admins === null && $this->admins !== null) {
-            $this->admins->setUserId(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($admins !== null && $admins->getUserId() !== $this) {
-            $admins->setUserId($this);
-        }
-
-        $this->admins = $admins;
-
-        return $this;
-    }
-
-    public function getReaders(): ?Readers
+    public function getReaders(): ?Reader
     {
         return $this->readers;
     }
 
-    public function setReaders(Readers $readers): self
+    public function setReaders(Reader $readers): self
     {
         // set the owning side of the relation if necessary
         if ($readers->getUserId() !== $this) {

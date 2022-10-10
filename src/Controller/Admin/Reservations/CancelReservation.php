@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Reservations;
 
-use App\Repository\Books\ReservationsRepository;
+use App\Repository\Books\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +14,7 @@ class CancelReservation extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ReservationsRepository $reservationsRepository
+        private readonly ReservationRepository $reservationsRepository
     ) {
 
     }

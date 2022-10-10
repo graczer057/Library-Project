@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Utils;
 
-use App\Repository\Books\RentsRepository;
+use App\Repository\Books\RentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +16,7 @@ class RoleHandlerController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly RentsRepository $rentsRepository
+        private readonly RentRepository $rentsRepository
     ) {
 
     }

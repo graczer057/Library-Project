@@ -2,12 +2,12 @@
 
 namespace App\Entity\Books;
 
-use App\Repository\Books\RentsRepository;
+use App\Repository\Books\RentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: RentsRepository::class)]
-class Rents
+#[ORM\Entity(repositoryClass: RentRepository::class)]
+class Rent
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,7 +15,7 @@ class Rents
     private ?int $id = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Reservations $reservationId = null;
+    private ?Reservation $reservationId = null;
 
     #[ORM\Column]
     private ?bool $isActive = null;
@@ -27,7 +27,7 @@ class Rents
     private ?bool $isReturned = null;
 
     public function __construct(
-        Reservations $reservations
+        Reservation $reservations
     ) {
         $this->reservationId = $reservations;
         $this->isActive = true;
@@ -41,12 +41,12 @@ class Rents
         return $this->id;
     }
 
-    public function getReservationId(): ?Reservations
+    public function getReservationId(): ?Reservation
     {
         return $this->reservationId;
     }
 
-    public function setReservationId(?Reservations $reservationId): self
+    public function setReservationId(?Reservation $reservationId): self
     {
         $this->reservationId = $reservationId;
 

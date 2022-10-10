@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Utils;
 
-use App\Repository\Books\RentsRepository;
+use App\Repository\Books\RentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CheckRentExpireDateController extends AbstractController
 {
-    public static function check(EntityManagerInterface $entityManager, RentsRepository $rentsRepository): void
+    public static function check(EntityManagerInterface $entityManager, RentRepository $rentsRepository): void
     {
         $todayDate = new \DateTime("now");
 

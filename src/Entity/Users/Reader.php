@@ -2,14 +2,14 @@
 
 namespace App\Entity\Users;
 
-use App\Entity\Books\Reservations;
-use App\Repository\Users\ReadersRepository;
+use App\Entity\Books\Reservation;
+use App\Repository\Users\ReaderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ReadersRepository::class)]
-class Readers
+#[ORM\Entity(repositoryClass: ReaderRepository::class)]
+class Reader
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,7 +18,7 @@ class Readers
 
     #[ORM\OneToOne(inversedBy: 'readers', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Users $userId = null;
+    private ?User $userId = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -29,7 +29,7 @@ class Readers
     #[ORM\Column]
     private ?int $reservationsQuantity = null;
 
-    #[ORM\OneToMany(mappedBy: 'readerId', targetEntity: Reservations::class)]
+    #[ORM\OneToMany(mappedBy: 'readerId', targetEntity: Reservation::class)]
     private Collection $reservations;
 
     public function __construct()
@@ -42,12 +42,12 @@ class Readers
         return $this->id;
     }
 
-    public function getUserId(): ?Users
+    public function getUserId(): ?User
     {
         return $this->userId;
     }
 
-    public function setUserId(Users $userId): self
+    public function setUserId(User $userId): self
     {
         $this->userId = $userId;
 
@@ -91,14 +91,14 @@ class Readers
     }
 
     /**
-     * @return Collection<int, Reservations>
+     * @return Collection<int, Reservation>
      */
     public function getReservations(): Collection
     {
         return $this->reservations;
     }
 
-    public function addReservation(Reservations $reservation): self
+    public function addReservation(Reservation $reservation): self
     {
         if (!$this->reservations->contains($reservation)) {
             $this->reservations->add($reservation);
@@ -108,7 +108,7 @@ class Readers
         return $this;
     }
 
-    public function removeReservation(Reservations $reservation): self
+    public function removeReservation(Reservation $reservation): self
     {
         if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)

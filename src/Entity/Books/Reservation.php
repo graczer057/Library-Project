@@ -2,12 +2,12 @@
 
 namespace App\Entity\Books;
 
-use App\Entity\Users\Readers;
-use App\Repository\Books\ReservationsRepository;
+use App\Entity\Users\Reader;
+use App\Repository\Books\ReservationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ReservationsRepository::class)]
-class Reservations
+#[ORM\Entity(repositoryClass: ReservationRepository::class)]
+class Reservation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,17 +15,17 @@ class Reservations
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    private ?Books $bookId = null;
+    private ?Book $bookId = null;
 
     #[ORM\Column]
     private ?bool $isRented = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    private ?Readers $readerId = null;
+    private ?Reader $readerId = null;
 
     public function __construct(
-        Readers $readerId,
-        Books $bookId
+        Reader $readerId,
+        Book $bookId
     ) {
         $this->readerId = $readerId;
         $this->bookId = $bookId;
@@ -37,12 +37,12 @@ class Reservations
         return $this->id;
     }
 
-    public function getBookId(): ?Books
+    public function getBookId(): ?Book
     {
         return $this->bookId;
     }
 
-    public function setBookId(?Books $bookId): self
+    public function setBookId(?Book $bookId): self
     {
         $this->bookId = $bookId;
 
@@ -61,12 +61,12 @@ class Reservations
         return $this;
     }
 
-    public function getReaderId(): ?Readers
+    public function getReaderId(): ?Reader
     {
         return $this->readerId;
     }
 
-    public function setReaderId(?Readers $readerId): self
+    public function setReaderId(?Reader $readerId): self
     {
         $this->readerId = $readerId;
 

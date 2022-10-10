@@ -23,9 +23,11 @@
                 <li class="list-group-item">
                     <p>Adres email: <strong>{{ user.email }}</strong></p>
                     <p>Login: <strong>{{ user.login }}</strong></p>
-                    <p>Status: <strong>{% if user.isActive == false %} Nie aktywny typ konta {% else %} Aktywny {% endif %}</strong></p>
+                    <p>Status: <strong>Aktywny</strong></p>
                     <a class="btn btn-outline-info my-2" href="{{ path('adminEditUser', {'id': user.id}) }}">Edytuj</a>
-                    <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteUser', {'id': user.id}) }}">Usuń</a>
+                    {% if app.user.id != user.id %}
+                        <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteUser', {'id': user.id}) }}">Usuń</a>
+                    {% endif %}
                 </li>
             </ul>
         {% endif %}
@@ -43,7 +45,7 @@
                     <p>Adres email: <strong>{{ user.email }}</strong></p>
                     <p>Login: <strong>{{ user.login }}</strong></p>
                     <p>Status: <strong>{% if user.isActive == false %} Nie aktywny typ konta {% else %} Aktywny {% endif %}</strong></p>
-                    <p>Zablokowany: <strong>{% if user.isBanned == false %} Tak {% else %} Nie {% endif %}</strong></p>
+                    <p>Zablokowany: <strong>{% if user.isBanned == true %} Tak {% else %} Nie {% endif %}</strong></p>
                     <a class="btn btn-outline-info my-2" href="{{ path('adminEditUser', {'id': user.id}) }}">Edytuj</a>
                     <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteUser', {'id': user.id}) }}">Usuń</a>
                 </li>

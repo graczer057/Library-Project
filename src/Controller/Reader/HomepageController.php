@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Reader;
 
 use App\Controller\Interfaces\HomepageInterface;
-use App\Repository\Books\BooksRepository;
-use App\Repository\Books\RentsRepository;
-use App\Repository\Books\ReservationsRepository;
-use App\Repository\Users\ReadersRepository;
+use App\Repository\Books\BookRepository;
+use App\Repository\Books\RentRepository;
+use App\Repository\Books\ReservationRepository;
+use App\Repository\Users\ReaderRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +17,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class HomepageController extends AbstractController implements HomepageInterface
 {
     public function __construct(
-        private readonly BooksRepository $booksRepository,
-        private readonly ReadersRepository $readersRepository,
-        private readonly ReservationsRepository $reservationsRepository,
-        private readonly RentsRepository $rentsRepository
+        private readonly BookRepository        $booksRepository,
+        private readonly ReaderRepository      $readersRepository,
+        private readonly ReservationRepository $reservationsRepository,
+        private readonly RentRepository        $rentsRepository
     ) {
     }
 

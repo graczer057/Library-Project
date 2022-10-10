@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Rents;
 
-use App\Repository\Books\RentsRepository;
+use App\Repository\Books\RentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +14,7 @@ class ReturnRentedBook extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly RentsRepository $rentsRepository
+        private readonly RentRepository $rentsRepository
     ) {
 
     }

@@ -2,26 +2,26 @@
 
 namespace App\Repository\Users;
 
-use App\Entity\Users\Readers;
+use App\Entity\Users\Reader;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Readers>
+ * @extends ServiceEntityRepository<Reader>
  *
- * @method Readers|null find($id, $lockMode = null, $lockVersion = null)
- * @method Readers|null findOneBy(array $criteria, array $orderBy = null)
- * @method Readers[]    findAll()
- * @method Readers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Reader|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Reader|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Reader[]    findAll()
+ * @method Reader[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ReadersRepository extends ServiceEntityRepository
+class ReaderRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Readers::class);
+        parent::__construct($registry, Reader::class);
     }
 
-    public function save(Readers $entity, bool $flush = false): void
+    public function save(Reader $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ReadersRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Readers $entity, bool $flush = false): void
+    public function remove(Reader $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ReadersRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Readers[] Returns an array of Readers objects
+//     * @return Reader[] Returns an array of Reader objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ReadersRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Readers
+//    public function findOneBySomeField($value): ?Reader
 //    {
 //        return $this->createQueryBuilder('r')
 //            ->andWhere('r.exampleField = :val')

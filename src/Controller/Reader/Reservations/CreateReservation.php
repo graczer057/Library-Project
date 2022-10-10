@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Reader\Reservations;
 
-use App\Entity\Books\Reservations;
-use App\Repository\Books\BooksRepository;
-use App\Repository\Books\ReservationsRepository;
-use App\Repository\Users\ReadersRepository;
+use App\Entity\Books\Reservation;
+use App\Repository\Books\BookRepository;
+use App\Repository\Books\ReservationRepository;
+use App\Repository\Users\ReaderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +18,9 @@ class CreateReservation extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ReadersRepository $readersRepository,
-        private readonly ReservationsRepository $reservationsRepository,
-        private readonly BooksRepository $booksRepository
+        private readonly ReaderRepository       $readersRepository,
+        private readonly ReservationRepository  $reservationsRepository,
+        private readonly BookRepository         $booksRepository
     ) {
 
     }
@@ -56,7 +56,7 @@ class CreateReservation extends AbstractController
             return $this->redirectToRoute('readerHomepage');
         }
 
-        $newReservation = new Reservations(
+        $newReservation = new Reservation(
             $reader,
             $specificBook
         );

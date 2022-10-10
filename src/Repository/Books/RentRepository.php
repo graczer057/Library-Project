@@ -2,26 +2,26 @@
 
 namespace App\Repository\Books;
 
-use App\Entity\Books\Rents;
+use App\Entity\Books\Rent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Rents>
+ * @extends ServiceEntityRepository<Rent>
  *
- * @method Rents|null find($id, $lockMode = null, $lockVersion = null)
- * @method Rents|null findOneBy(array $criteria, array $orderBy = null)
- * @method Rents[]    findAll()
- * @method Rents[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Rent|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Rent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Rent[]    findAll()
+ * @method Rent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RentsRepository extends ServiceEntityRepository
+class RentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Rents::class);
+        parent::__construct($registry, Rent::class);
     }
 
-    public function save(Rents $entity, bool $flush = false): void
+    public function save(Rent $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class RentsRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Rents $entity, bool $flush = false): void
+    public function remove(Rent $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class RentsRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Rents[] Returns an array of Rents objects
+//     * @return Rent[] Returns an array of Rent objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class RentsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Rents
+//    public function findOneBySomeField($value): ?Rent
 //    {
 //        return $this->createQueryBuilder('r')
 //            ->andWhere('r.exampleField = :val')
