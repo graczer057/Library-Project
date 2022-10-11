@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Form\Admin\Users;
 
-use Doctrine\DBAL\Types\IntegerType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-class EditUserFormType extends AbstractType
+class EditReaderFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -27,11 +30,25 @@ class EditUserFormType extends AbstractType
                 ],
                 'label' => 'Login: '
             ])
-            ->add('reservationsQuantity', IntegerType::class, [
+            ->add('isActive', ChoiceType::class, [
                 'attr' => [
                     'class' => 'form-control'
                 ],
-                'label' => 'Liczba rezerwacji/wypożyczeń'
+                'label' => 'Status konta: ',
+                'choices' => [
+                    'Aktywny' => 1,
+                    'Nie aktywny' => 0
+                ]
+            ])
+            ->add('isBanned', ChoiceType::class, [
+                'attr' => [
+                    'class' => 'form-control'
+                ],
+                'label' => 'Zablokowany: ',
+                'choices' => [
+                    'Zablokowany' => true,
+                    'Odblokowany' => false
+                ]
             ])
             ->add('btn_submit', SubmitType::class, [
                 'attr' => [

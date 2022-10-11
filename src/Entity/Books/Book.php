@@ -28,7 +28,10 @@ class Book
     private ?int $quantity = null;
 
     #[ORM\OneToMany(mappedBy: 'bookId', targetEntity: Reservation::class)]
-    private Collection $reservations;
+    private Collection $reservation;
+
+    #[ORM\OneToMany(mappedBy: 'bookId', targetEntity: Rent::class)]
+    private Collection $rent;
 
     public function __construct(
         string $name,
@@ -40,7 +43,7 @@ class Book
         $this->author = $author;
         $this->description = $description;
         $this->quantity = $quantity;
-        $this->reservations = new ArrayCollection();
+        $this->reservation = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,13 +104,13 @@ class Book
      */
     public function getReservations(): Collection
     {
-        return $this->reservations;
+        return $this->reservation;
     }
 
     public function addReservation(Reservation $reservation): self
     {
-        if (!$this->reservations->contains($reservation)) {
-            $this->reservations->add($reservation);
+        if (!$this->reservation->contains($reservation)) {
+            $this->reservation->add($reservation);
             $reservation->setBookId($this);
         }
 
@@ -116,7 +119,7 @@ class Book
 
     public function removeReservation(Reservation $reservation): self
     {
-        if ($this->reservations->removeElement($reservation)) {
+        if ($this->reservation->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
             if ($reservation->getBookId() === $this) {
                 $reservation->setBookId(null);
@@ -124,5 +127,21 @@ class Book
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRents(): Collection
+    {
+        return $this->rent;
+    }
+
+    /**
+     * @param Collection $rents
+     */
+    public function setRents(Collection $rents): void
+    {
+        $this->rent = $rents;
     }
 }

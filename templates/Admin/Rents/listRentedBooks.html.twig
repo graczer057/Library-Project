@@ -20,8 +20,8 @@
 
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
-                <p>Imię i nazwisko czytelnika wypożyczającego: <strong>{{ rent.reservationId.readerId.name }} {{ rent.reservationId.readerId.surname }}</strong></p>
-                <p>Tytuł książki wypożyczonej: <strong>{{ rent.reservationId.bookId.name }}</strong></p>
+                <p>Imię i nazwisko czytelnika wypożyczającego: <strong>{{ rent.readerId.name }} {{ rent.readerId.surname }}</strong></p>
+                <p>Tytuł książki wypożyczonej: <strong>{{ rent.bookId.name }}</strong></p>
                 <p>Ostateczna data oddania książki: <strong>{{ rent.expireDate|date('H:i d-m-Y') }}</strong></p>
                 <p>Czy książka została oddana: <strong>Nie</strong></p>
                 <a class="btn btn-outline-info my-2" href="{{ path('adminReturnedRentedBook', {'rentId': rent.id}) }}">Potwierdź zwrócenie książki przez ucznia</a>
@@ -38,10 +38,11 @@
 
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
-                <p>Imię i nazwisko czytelnika wypożyczającego: <strong>{{ rent.reservationId.readerId.name }} {{ rent.reservationId.readerId.surname }}</strong></p>
-                <p>Tytuł książki wypożyczonej: <strong>{{ rent.reservationId.bookId.name }}</strong></p>
+                <p>Imię i nazwisko czytelnika wypożyczającego: <strong>{{ rent.readerId.name }} {{ rent.readerId.surname }}</strong></p>
+                <p>Tytuł książki wypożyczonej: <strong>{{ rent.bookId.name }}</strong></p>
                 <p>Ostateczna data oddania książki: <strong>{{ rent.expireDate|date('H:i d-m-Y') }}</strong></p>
                 <p>Czy książka została oddana: <strong>Nie</strong></p>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminReturnedRentedBook', {'rentId': rent.id}) }}">Potwierdź zwrócenie książki przez ucznia</a>
             </li>
         </ul>
 

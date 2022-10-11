@@ -2,6 +2,7 @@
 
 namespace App\Entity\Users;
 
+use App\Entity\Books\Rent;
 use App\Entity\Books\Reservation;
 use App\Repository\Users\ReaderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -30,11 +31,14 @@ class Reader
     private ?int $reservationsQuantity = null;
 
     #[ORM\OneToMany(mappedBy: 'readerId', targetEntity: Reservation::class)]
-    private Collection $reservations;
+    private Collection $reservation;
+
+    #[ORM\OneToMany(mappedBy: 'readerId', targetEntity: Rent::class)]
+    private Collection $rent;
 
     public function __construct()
     {
-        $this->reservations = new ArrayCollection();
+        $this->reservation = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,13 +99,13 @@ class Reader
      */
     public function getReservations(): Collection
     {
-        return $this->reservations;
+        return $this->reservation;
     }
 
     public function addReservation(Reservation $reservation): self
     {
-        if (!$this->reservations->contains($reservation)) {
-            $this->reservations->add($reservation);
+        if (!$this->reservation->contains($reservation)) {
+            $this->reservation->add($reservation);
             $reservation->setReaderId($this);
         }
 
@@ -110,7 +114,7 @@ class Reader
 
     public function removeReservation(Reservation $reservation): self
     {
-        if ($this->reservations->removeElement($reservation)) {
+        if ($this->reservation->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
             if ($reservation->getReaderId() === $this) {
                 $reservation->setReaderId(null);
@@ -118,5 +122,21 @@ class Reader
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRent(): Collection
+    {
+        return $this->rent;
+    }
+
+    /**
+     * @param Collection $rent
+     */
+    public function setRent(Collection $rent): void
+    {
+        $this->rent = $rent;
     }
 }

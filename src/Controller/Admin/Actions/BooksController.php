@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin\CRUD;
+namespace App\Controller\Admin\Actions;
 
 use App\Controller\Admin\Interfaces\CRUDInterface;
 use App\Controller\Admin\Utils\CheckValue;
@@ -40,10 +40,8 @@ class BooksController extends AbstractController implements CRUDInterface
         if ($form->isSubmitted() && $form->isValid()) {
             $data = FormHandler::getDataForm($form);
 
-            $existingBookName = FindObjects::findObjectByName($this->booksRepository, $data['name']);
-
             try {
-                FindExistingObjects::findExistingObject($existingBookName);
+                FindExistingObjects::findExistingObject($this->booksRepository, 'name', $data['name'], false);
             } catch (Exception) {
                 $this->addFlash('error', 'Książka z podanym tytułem już istnieje.');
 
@@ -53,7 +51,7 @@ class BooksController extends AbstractController implements CRUDInterface
             }
 
             try {
-                CheckValue::checkGreaterValue($data['quantity'], 0);
+                CheckValue::checkValue($data['quantity'], 0, true);
             } catch (Exception) {
                 $this->addFlash('error', 'Ilość książek trzeba podać jako liczba większa lub równa zeru.');
 
@@ -79,10 +77,8 @@ class BooksController extends AbstractController implements CRUDInterface
     #[Route('/book/edit/{id}', name: 'adminEditBook', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
-        $specificBook = FindObjects::findObjectById($this->booksRepository, $id);
-
         try {
-            FindExistingObjects::findExistingObject($specificBook);
+            $specificBook = FindExistingObjects::findExistingObject($this->booksRepository, 'id', $id, true);
         } catch (Exception) {
             $this->addFlash('error', 'Przykro nam, ale podana książka nie istnieje');
 
@@ -92,6 +88,17 @@ class BooksController extends AbstractController implements CRUDInterface
         $form = $this->formHandler->checkForm($request, EditBookFormType::class, $specificBook);
 
         if ( ($form->isSubmitted()) && ($form->isValid()) ) {
+            try {
+                //FindExistingObjects::findExistingObject($this->booksRepository, 'name', $specificBook->getName(), false);
+                CheckValue::checkValue($specificBook->getQuantity(), 0, true);
+            } catch (Exception) {
+                $this->addFlash('error', 'Ilość książek trzeba podać jako liczba większa lub równa zeru.');
+
+                return $this->render('Admin/Books/createBookForm.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+
             EntityManagerCommands::persistObject($this->entityManager, $specificBook);
 
             $this->addFlash('success', 'Książka została pomyślnie edytowana');
@@ -117,10 +124,8 @@ class BooksController extends AbstractController implements CRUDInterface
     #[Route('/book/delete/{id}', name: 'adminDeleteBook', methods:['GET', 'POST'])]
     public function delete(int $id): Response
     {
-        $specificBook = FindObjects::findObjectById($this->booksRepository, $id);
-
         try {
-            FindExistingObjects::findExistingObject($specificBook);
+            $specificBook = FindExistingObjects::findExistingObject($this->booksRepository, 'id', $id, true);
         } catch (Exception) {
             $this->addFlash('error', 'Przykro nam, ale podana książka nie istnieje');
 

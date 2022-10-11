@@ -9,10 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CheckValue extends AbstractController
 {
-    public static function checkGreaterValue(int $userValue, int $correctValue): void
+    public static function checkValue(int $userValue, int $correctValue, bool $isGreater): void
     {
-        if ($userValue < 0) {
-            throw new Exception();
+        if ($isGreater) {
+            if ($userValue < $correctValue) {
+                throw new Exception();
+            }
+        } else {
+            if ($userValue > $correctValue) {
+                throw new Exception();
+            }
         }
     }
 }

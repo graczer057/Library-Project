@@ -14,13 +14,13 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\ManyToOne(inversedBy: 'reservation')]
     private ?Book $bookId = null;
 
     #[ORM\Column]
     private ?bool $isRented = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\ManyToOne(inversedBy: 'reservation')]
     private ?Reader $readerId = null;
 
     public function __construct(

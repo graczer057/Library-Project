@@ -24,8 +24,9 @@
                 <p>Pozostała liczba rezerwacji: <strong>{{ reservation.readerId.reservationsQuantity }}</strong></p>
                 <p>Tytuł książki zarezerwowanej: <strong>{{ reservation.bookId.name }}</strong></p>
                 <p>Pozostała ilość książek na stanie: {{ reservation.bookId.quantity }}</p>
-                <a class="btn btn-outline-info my-2" href="{{ path('adminConfirmReservation', {'reservationId': reservation.id}) }}">Zatwierdź rezerwacje (wypożycz książkę na 7 dni)</a>
-                <a class="btn btn-outline-danger my-2" href="{{ path('adminCancelReservation', {'reservationId': reservation.id}) }}">Usuń rezerwacje</a>
+                <a class="btn btn-outline-success my-2" href="{{ path('adminConfirmReservation', {'id': reservation.id}) }}">Zatwierdź rezerwacje (wypożycz książkę na 7 dni)</a>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminEditReservation', {'id': reservation.id}) }}">Edytuj rezerwacje</a>
+                <a class="btn btn-outline-danger my-2" href="{{ path('adminCancelReservation', {'id': reservation.id}) }}">Usuń rezerwacje</a>
             </li>
         </ul>
 

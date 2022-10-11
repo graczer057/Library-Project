@@ -11,18 +11,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FindExistingObjects extends AbstractController
 {
-    public static function findExistingUser(UserRepository $userRepository, string $email, string $login): void
+    public static function findExistingObjectByTwoArguments(mixed $repository, string $firstValueName, mixed $firstValue, string $secondValueName, string $secondValue): void
     {
-        if(FindObjects::findUserByEmail($userRepository, $email) || FindObjects::findUserByLogin($userRepository, $login)) {
+        if(FindObjects::findObjectsBy($repository, $firstValueName, $firstValue, true) && FindObjects::findObjectsBy($repository, $secondValueName, $secondValue, true)) {
             throw new Exception();
         }
     }
 
-    public static function findExistingObject(mixed $isExisting): void
+    public static function findExistingObject(mixed $repository, string $valueName, mixed $value, bool $isExisting): mixed
     {
-        if(!$isExisting) {
-            throw new Exception();
+        $specificObject = FindObjects::findObjectsBy($repository, $valueName, $value, true);
+
+        if($isExisting) {
+            if(!$specificObject) {
+                throw new Exception();
+            }
+        } else {
+            if($specificObject) {
+                throw new Exception();
+            }
         }
+
+        return $specificObject;
 
     }
 }

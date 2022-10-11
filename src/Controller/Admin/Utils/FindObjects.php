@@ -15,7 +15,17 @@ class FindObjects extends AbstractController
         return $repository->findAll();
     }
 
-    public static function findUserByEmail(UserRepository $userRepository, string $email): ?User
+    public static function findObjectsBy(mixed $repository, string $valueName, mixed $value, bool $isReturnOneObject): mixed
+    {
+        switch ($isReturnOneObject) {
+            case true:
+                return $repository->findOneBy([$valueName => $value]);
+            case false:
+                return $repository->findBy([$valueName => $value]);
+        }
+    }
+
+    /*public static function findUserByEmail(UserRepository $userRepository, string $email): ?User
     {
         return $userRepository->findOneBy(['email' => $email]);
     }
@@ -33,5 +43,5 @@ class FindObjects extends AbstractController
     public static function findObjectByName(mixed $bookRepository, string $name): mixed
     {
         return $bookRepository->findOneBy(['name' => $name]);
-    }
+    }*/
 }

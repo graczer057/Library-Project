@@ -30,22 +30,29 @@ class ReturnRentedBook extends AbstractController
             return $this->redirectToRoute('adminListRentedBooks');
         }
 
-        $reservation = $specificRent->getReservationId();
+        $todayDate = new \DateTime("now");
 
-        $bookQuantity = $reservation->getBookId()->getQuantity();
-        $newBookQuantity = $reservation->getBookId()->setQuantity($bookQuantity + 1);
+        //if ($todayDate->getTimestamp() < $specificRent->getExpireDate()->getTimestamp()) {
+            $bookQuantity = $specificRent->getBookId()->getQuantity();
+            $newBookQuantity = $specificRent->getBookId()->setQuantity($bookQuantity + 1);
 
-        $readerReservationQuantity = $reservation->getReaderId()->getReservationsQuantity();
-        $newReaderReservationQuantity = $reservation->getReaderId()->setReservationsQuantity($readerReservationQuantity + 1);
+            $readerReservationQuantity = $specificRent->getReaderId()->getReservationsQuantity();
+            $newReaderReservationQuantity = $specificRent->getReaderId()->setReservationsQuantity($readerReservationQuantity + 1);
 
-        $this->entityManager->remove($specificRent);
-        $this->entityManager->remove($reservation);
-        $this->entityManager->persist($newBookQuantity);
-        $this->entityManager->persist($newReaderReservationQuantity);
-        $this->entityManager->flush();
+            $user = $specificRent->getReaderId()->getUserId()->setIsBanned(false);
 
-        $this->addFlash('success', 'Udało się zakończyć wypożyczenie książki. Rezerwacja została usunięta, liczba książek na stanie oraz możliwośći rezerwacji i/lub wypożyczeń czytelnika zwiększyły się o jeden');
+            $this->entityManager->remove($specificRent);
+            //$this->entityManager->remove($reservation);
+            $this->entityManager->persist($user);
+            $this->entityManager->persist($newBookQuantity);
+            $this->entityManager->persist($newReaderReservationQuantity);
+            $this->entityManager->flush();
 
-        return $this->redirectToRoute('adminListRentedBooks');
+            $this->addFlash('success', 'Udało się zakończyć wypożyczenie książki. Rezerwacja została usunięta, liczba książek na stanie oraz możliwośći rezerwacji i/lub wypożyczeń czytelnika zwiększyły się o jeden');
+
+            return $this->redirectToRoute('adminListRentedBooks');
+//        } else {
+//
+//        }
     }
 }

@@ -20,4 +20,12 @@ class EntityManagerCommands extends AbstractController
         $entityManager->remove($object);
         $entityManager->flush();
     }
+
+    public static function persistObjects(EntityManagerInterface $entityManager, array $objects): void
+    {
+        foreach ($objects as $object) {
+            $entityManager->persist($object);
+        }
+        $entityManager->flush();
+    }
 }

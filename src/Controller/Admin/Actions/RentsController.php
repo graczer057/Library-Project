@@ -2,26 +2,28 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin\Rents;
+namespace App\Controller\Admin\Actions;
 
-use App\Controller\Admin\Interfaces\ListObjectsInterface;
+use App\Controller\Admin\Utils\FindObjects;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\Books\RentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ListRentedBooks extends AbstractController implements ListObjectsInterface
+#[Route('/admin/book/rent')]
+class RentsController extends AbstractController
 {
     public function __construct(
-        private readonly RentRepository $rentsRepository
+        private readonly EntityManagerInterface $entityManager,
+        private readonly RentRepository $rentRepository
     ) {
-
     }
 
-    #[Route('/admin/book/rent/list', name: 'adminefsgxfListRentedBooks', methods: ['GET', 'POST'])]
+    #[Route('/list', name: 'adminListRentedBooks', methods: ['GET', 'POST'])]
     public function list(): Response
     {
-        /*$rentedBooks = $this->rentsRepository->findBy([], ['id' => 'ASC']);
+        $rentedBooks = $this->rentRepository->findBy([], ['id' => 'ASC']);
 
         $todayDate = new \DateTime("now");
 
@@ -36,6 +38,13 @@ class ListRentedBooks extends AbstractController implements ListObjectsInterface
         return $this->render('Admin/Rents/listRentedBooks.html.twig', [
             'actualRent' => $actualRent ?? null,
             'expiredRent' => $expiredRent ?? null
-        ]);*/
+        ]);
     }
+
+    public function return(): Response
+    {
+
+    }
+
+
 }

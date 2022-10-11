@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin\CRUD;
+namespace App\Controller\Admin\Actions;
 
 use App\Controller\Admin\Interfaces\CRUDInterface;
 use App\Controller\Admin\Utils\EntityManagerCommands;
@@ -11,6 +11,7 @@ use App\Controller\Admin\Utils\FindObjects;
 use App\Controller\Admin\Utils\FormHandler\FormHandler;
 use App\Controller\Admin\Utils\ObjectsCommands\CreateObject;
 use App\Form\Admin\Users\CreateUserFormType;
+use App\Form\Admin\Users\EditReaderFormType;
 use App\Form\Admin\Users\EditUserFormType;
 use App\Repository\Users\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,9 +40,10 @@ class UsersController extends AbstractController implements CRUDInterface
             $data = FormHandler::getDataForm($form);
 
             try {
-                FindExistingObjects::findExistingUser($this->usersRepository, $data['email'], $data['login']);
+                FindExistingObjects::findExistingObjectByTwoArguments($this->usersRepository, 'email', $data['email'], 'login', $data['login']);
             } catch (Exception) {
                 $this->addFlash('error', 'Przykro nam, ale użytkownik o podanym emailu lub loginie już istnieje, prosimy o wprowadzenie innych danych');
+
                 return $this->render('Admin/Users/createUserForm.html.twig', [
                     'form' => $form->createView()
                 ]);
@@ -65,17 +67,24 @@ class UsersController extends AbstractController implements CRUDInterface
     #[Route('/user/edit/{id}', name: 'adminEditUser', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
-        $specificUser = FindObjects::findObjectById($this->usersRepository, $id);
+        //$specificUser = FindObjects::findObjectsBy($this->usersRepository, 'id', $id, true);
 
         try {
-            FindExistingObjects::findExistingObject($specificUser);
+            $specificUser = FindExistingObjects::findExistingObject($this->usersRepository, 'id', $id, true);
         } catch (Exception){
             $this->addFlash('error', 'Przykro nam, ale podany użytkownik nie istnieje');
 
             return $this->redirectToRoute('adminListUsers');
         }
 
-        $form = $this->formHandler->checkForm($request, EditUserFormType::class, $specificUser);
+        $userRole = $specificUser->getRoles();
+
+        if ($userRole == ["ROLE_ADMIN"]) {
+            $form = $this->formHandler->checkForm($request, EditUserFormType::class, $specificUser);
+        } else {
+            $form = $this->formHandler->checkForm($request, EditReaderFormType::class, $specificUser);
+            dd($specificUser->getReaders());
+        }
 
         if ( ($form->isSubmitted()) && ($form->isValid())) {
             EntityManagerCommands::persistObject($this->entityManager, $specificUser);
@@ -101,10 +110,8 @@ class UsersController extends AbstractController implements CRUDInterface
     #[Route('/user/delete/{id}', name: 'adminDeleteUser', methods: ['GET', 'POST'])]
     public function delete(int $id): Response
     {
-        $specificUser = FindObjects::findObjectById($this->usersRepository, $id);
-
         try {
-            FindExistingObjects::findExistingObject($specificUser);
+            $specificUser = FindExistingObjects::findExistingObject($this->usersRepository, 'id', $id, true);
         } catch (Exception){
             $this->addFlash('error', 'Przykro nam, ale podany użytkownik nie istnieje');
 

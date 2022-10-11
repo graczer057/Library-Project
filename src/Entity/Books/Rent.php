@@ -2,6 +2,7 @@
 
 namespace App\Entity\Books;
 
+use App\Entity\Users\Reader;
 use App\Repository\Books\RentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,11 +15,11 @@ class Rent
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Reservation $reservationId = null;
+    #[ORM\ManyToOne(inversedBy: 'rent')]
+    private ?Book $bookId = null;
 
-    #[ORM\Column]
-    private ?bool $isActive = null;
+    #[ORM\ManyToOne(inversedBy: 'rent')]
+    private ?Reader $readerId = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $expireDate = null;
@@ -27,10 +28,11 @@ class Rent
     private ?bool $isReturned = null;
 
     public function __construct(
-        Reservation $reservations
+        Book $book,
+        Reader $reader
     ) {
-        $this->reservationId = $reservations;
-        $this->isActive = true;
+        $this->bookId = $book;
+        $this->readerId = $reader;
         $date = new \DateTime("now");
         $this->expireDate = $date->modify("+ 7 days");
         $this->isReturned = false;
@@ -39,30 +41,6 @@ class Rent
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getReservationId(): ?Reservation
-    {
-        return $this->reservationId;
-    }
-
-    public function setReservationId(?Reservation $reservationId): self
-    {
-        $this->reservationId = $reservationId;
-
-        return $this;
-    }
-
-    public function isIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
-
-        return $this;
     }
 
     public function getExpireDate(): ?\DateTimeInterface
@@ -87,5 +65,25 @@ class Rent
         $this->isReturned = $isReturned;
 
         return $this;
+    }
+
+    public function getBookId(): ?Book
+    {
+        return $this->bookId;
+    }
+
+    public function setBookId(?Book $bookId): void
+    {
+        $this->bookId = $bookId;
+    }
+
+    public function getReaderId(): ?Reader
+    {
+        return $this->readerId;
+    }
+
+    public function setReaderId(?Reader $readerId): void
+    {
+        $this->readerId = $readerId;
     }
 }
