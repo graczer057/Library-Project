@@ -30,7 +30,8 @@ class CreateObject extends AbstractController
             $data['name'],
             $data['author'],
             $data['description'],
-            $data['quantity']
+            $data['quantity'],
+            $data['cover']
         );
     }
 

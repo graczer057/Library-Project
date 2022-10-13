@@ -10,6 +10,7 @@ use App\Repository\Books\ReservationRepository;
 use App\Repository\Users\ReaderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -70,6 +71,11 @@ class CreateReservation extends AbstractController
         $this->entityManager->persist($bookNewQuantity);
         $this->entityManager->flush();
 
-        return $this->redirectToRoute('readerHomepage');
+        return new JsonResponse([
+            'status' => 'success',
+            'statusMsg' => 'Dodałeś rezerwację',
+            ], 200,);
+
+        /*return $this->redirectToRoute('readerHomepage');*/
     }
 }

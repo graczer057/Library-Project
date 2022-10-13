@@ -32,6 +32,12 @@ class RoleHandlerController extends AbstractController
         if ($user->getRoles() === ["ROLE_ADMIN"]) {
             return $this->redirectToRoute('adminHomepage');
         } elseif ($user->getRoles() === ["ROLE_READER"]) {
+            if ($user->getIsActive() === false) {
+                return $this->redirectToRoute('readerCompleteRegistration');
+            }
+            if ($user->getIsBanned() === true) {
+                return $this->redirectToRoute('banPage');
+            }
             return $this->redirectToRoute('readerHomepage');
         } else {
             throw new Exception();

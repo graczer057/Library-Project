@@ -22,7 +22,7 @@
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
+                            <img class="card-img-top" {% if book.cover == null %} src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" {% else %} src="{{ asset('uploads/covers/'~book.cover~'') }}" {% endif %} alt="..."/>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -57,25 +57,38 @@
                                             wypożyczona</a>
                                         <p>Ostateczna data oddania książki: <strong>{{ rentDate }}</strong></p>
                                     </div>
-                                {% else %}
-                                    {% if (book.quantity <= 0 or reader.reservationsQuantity == 0) and reservationStatus == false %}
+                                    {% elseif (book.quantity <= 0 or reader.reservationsQuantity == 0) and reservationStatus == false %}
                                         <div class="text-center"><a class="btn btn-danger mt-auto">Nie można
                                                 zarezerwować</a>
                                             <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
                                         </div>
                                     {% elseif reservationStatus == true %}
-                                        <div class="text-center"><a class="btn btn-outline-danger mt-auto"
-                                                                    href="{{ path('readerCancelReservation', {'bookId': book.id}) }}">Anuluj
-                                                rezerwacje</a>
+                                        <div class="text-center">
+                                            <button class="btn btn-outline-danger mt-auto" id="btn_cancel{{ book.id }}" style="visibility: visible;">Anuluj rezerwację</button>
+                                            <button class="btn btn-outline-info mt-auto" id="btn_create{{ book.id }}" style="visibility: hidden;">Zarezerwuj</button>
+                                            <a id="cannotReserve" class="btn btn-danger mt-auto" style="visibility: hidden;">Nie można zarezerwować</a>
                                             <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
                                         </div>
                                     {% else %}
-                                        <div class="text-center"><a class="btn btn-outline-info mt-auto"
-                                                                    href="{{ path('readerCreateReservation', {'bookId': book.id}) }}">Zarezerwuj</a>
+                                        <div class="text-center">
+                                            <button class="btn btn-outline-info mt-auto" id="btn_create{{ book.id }}" style="visibility: visible;">Zarezerwuj</button>
+                                            <button class="btn btn-outline-danger mt-auto" id="btn_cancel{{ book.id }}" style="visibility: hidden;">Anuluj rezerwację</button>
+                                            <a id="cannotReserve" class="btn btn-danger mt-auto" style="visibility: hidden;">Nie można zarezerwować</a>
                                             <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
                                         </div>
-                                    {% endif %}
                                 {% endif %}
+
+                                {#<div class="text-center">
+                                    <button class="btn btn-outline-info mt-auto" id="btn_create{{ book.id }}" style="visibility: hidden;">Zarezerwuj</button>
+                                </div>
+
+                                <div class="text-center">
+                                    <button class="btn btn-outline-danger mt-auto" id="btn_cancel{{ book.id }}" style="visibility: hidden;">Anuluj rezerwację</button>
+                                </div>
+
+                                <div class="text-center"><a id="cannotReserve" style="visibility: hidden;" class="btn btn-danger mt-auto">Nie można
+                                        zarezerwować</a>
+                                </div>#}
                             </div>
                         </div>
                     </div>
@@ -85,4 +98,51 @@
         </div>
     </section>
 
+{% endblock %}
+{% block javascripts %}
+    <script>
+        let booksArray = {{ books|json_encode }};
+
+        let count = 0;
+
+        for (let key in booksArray) {
+            let id = key;
+
+            let cancel = document.getElementById("btn_cancel" + id);
+            let create = document.getElementById("btn_create" + id);
+
+            let urlCancel = "{{ path('readerCancelReservation', {'bookId': 'index'}) }}"
+            urlCancel = urlCancel.replace("index", id);
+
+            let urlCreate = "{{ path('readerCreateReservation', {'bookId': 'index'}) }}"
+            urlCreate = urlCreate.replace("index", id);
+
+            $(cancel).on('click', function (event) {
+                //event.preventDefault();
+
+                $.ajax({
+                    url: urlCancel,
+                    /*type: "delete",
+                    method: "delete",*/
+                    success: function (responseData) {
+                        $(cancel).css("visibility", "hidden")
+                        $(create).css("visibility", "visible")
+                    }
+                })
+            })
+            $(create).on('click', function (event) {
+                //event.preventDefault();
+
+                $.ajax({
+                    url: urlCreate,
+                    type: "post",
+                    method: "post",
+                    success: function (responseData) {
+                        $(cancel).css("visibility", "visible")
+                        $(create).css("visibility", "hidden")
+                    }
+                })
+            })
+        }
+    </script>
 {% endblock %}

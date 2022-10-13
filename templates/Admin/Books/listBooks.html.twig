@@ -25,6 +25,7 @@
                 <p>Opis książki: <strong>{{ book.description }}</strong></p>
                 <p>Ilość książek na stanie: {{ book.quantity }}</p>
                 <a class="btn btn-outline-info my-2" href="{{ path('adminEditBook', {'id': book.id}) }}">Edytuj</a>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminEditBookCover', {'id': book.id}) }}">Edytuj okładkę</a>
                 <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteBook', {'id': book.id}) }}">Usuń</a>
             </li>
         </ul>
@@ -44,6 +45,7 @@
                 <p>Opis książki: <strong>{{ book.description }}</strong></p>
                 <p>Ilość książek na stanie: {{ book.quantity }}</p>
                 <a class="btn btn-outline-info my-2" href="{{ path('adminEditBook', {'id': book.id}) }}">Edytuj</a>
+                <a class="btn btn-outline-info my-2" href="{{ path('adminEditBookCover', {'id': book.id}) }}">Edytuj okładkę</a>
                 <a class="btn btn-outline-danger my-2" href="{{ path('adminDeleteBook', {'id': book.id}) }}">Usuń</a>
             </li>
         </ul>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin\Books;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -39,6 +40,13 @@ class CreateBookFormType extends AbstractType
                     'class' => 'form-control'
                 ],
                 'label' => 'Ilość książek: '
+            ])
+            ->add('cover', FileType::class, [
+                'attr' => [
+                    'class' => 'form-control'
+                ],
+                'label' => 'Okładka książki: ',
+                'required' => false
             ])
             ->add('btn_submit', SubmitType::class, [
                 'attr' => [

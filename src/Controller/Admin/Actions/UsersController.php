@@ -10,6 +10,7 @@ use App\Controller\Admin\Utils\FindExistingObject\FindExistingObjects;
 use App\Controller\Admin\Utils\FindObjects;
 use App\Controller\Admin\Utils\FormHandler\FormHandler;
 use App\Controller\Admin\Utils\ObjectsCommands\CreateObject;
+use App\Entity\Users\Reader;
 use App\Form\Admin\Users\CreateUserFormType;
 use App\Form\Admin\Users\EditReaderFormType;
 use App\Form\Admin\Users\EditUserFormType;
@@ -50,6 +51,15 @@ class UsersController extends AbstractController implements CRUDInterface
             }
 
             $newUser = CreateObject::createUser($data);
+            if ($newUser->getRoles() === ["ROLE_READER"]) {
+                $newReader = new Reader(
+                    $newUser,
+                    3
+                );
+                $this->entityManager->persist($newReader);
+            }else{
+                $newUser->setIsActive(true);
+            }
 
             $this->entityManager->persist($newUser);
             $this->entityManager->flush();
@@ -79,11 +89,13 @@ class UsersController extends AbstractController implements CRUDInterface
 
         $userRole = $specificUser->getRoles();
 
+        dd($specificUser->getReader());
+
         if ($userRole == ["ROLE_ADMIN"]) {
             $form = $this->formHandler->checkForm($request, EditUserFormType::class, $specificUser);
         } else {
             $form = $this->formHandler->checkForm($request, EditReaderFormType::class, $specificUser);
-            dd($specificUser->getReaders());
+            dd($specificUser->getReader());
         }
 
         if ( ($form->isSubmitted()) && ($form->isValid())) {

@@ -32,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isActive;
 
     #[ORM\OneToOne(mappedBy: 'userId', cascade: ['persist', 'remove'])]
-    private ?Reader $readers = null;
+    private ?Reader $reader = null;
 
     #[ORM\Column]
     private ?bool $isBanned = null;
@@ -106,7 +106,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isIsActive(): bool
+    public function getIsActive(): bool
     {
         return $this->isActive;
     }
@@ -128,35 +128,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        if ($this->isBanned) {
-            throw new Exception ('BAN');
-        }
-
-        if ($this->isActive) {
-            return $this->login;
-        } else {
-            dd("Kompletacja użytkownika");
-        }
+        return $this->login;
     }
 
-    public function getReaders(): ?Reader
+    public function getReader(): ?Reader
     {
-        return $this->readers;
+        return $this->reader;
     }
 
-    public function setReaders(Reader $readers): self
+    public function setReader(Reader $reader): self
     {
         // set the owning side of the relation if necessary
-        if ($readers->getUserId() !== $this) {
-            $readers->setUserId($this);
+        if ($reader->getUserId() !== $this) {
+            $reader->setUserId($this);
         }
 
-        $this->readers = $readers;
+        $this->reader = $reader;
 
         return $this;
     }
 
-    public function isIsBanned(): ?bool
+    public function getIsBanned(): ?bool
     {
         return $this->isBanned;
     }

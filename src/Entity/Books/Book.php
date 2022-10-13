@@ -24,6 +24,9 @@ class Book
     #[ORM\Column(length: 1000)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cover = null;
+
     #[ORM\Column]
     private ?int $quantity = null;
 
@@ -37,13 +40,15 @@ class Book
         string $name,
         string $author,
         string $description,
-        int $quantity
+        int $quantity,
+        ?string $cover
     ){
         $this->name = $name;
         $this->author = $author;
         $this->description = $description;
         $this->quantity = $quantity;
         $this->reservation = new ArrayCollection();
+        $this->cover = $cover;
     }
 
     public function getId(): ?int
@@ -143,5 +148,15 @@ class Book
     public function setRents(Collection $rents): void
     {
         $this->rent = $rents;
+    }
+
+    public function getCover(): ?string
+    {
+        return $this->cover;
+    }
+
+    public function setCover(?string $cover): void
+    {
+        $this->cover = $cover;
     }
 }

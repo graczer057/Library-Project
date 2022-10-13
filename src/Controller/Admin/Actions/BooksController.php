@@ -8,19 +8,21 @@ use App\Controller\Admin\Interfaces\CRUDInterface;
 use App\Controller\Admin\Utils\CheckValue;
 use App\Controller\Admin\Utils\EntityManagerCommands;
 use App\Controller\Admin\Utils\FindExistingObject\FindExistingObjects;
-use App\Controller\Admin\Utils\FindObjects;
 use App\Controller\Admin\Utils\FormHandler\FormHandler;
-use App\Controller\Admin\Utils\ObjectsCommands\CreateObject;
 use App\Entity\Books\Book;
 use App\Form\Admin\Books\CreateBookFormType;
 use App\Form\Admin\Books\EditBookFormType;
+use App\Form\Admin\Books\EditCoverFileFormType;
 use App\Repository\Books\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin')]
 class BooksController extends AbstractController implements CRUDInterface
@@ -28,7 +30,8 @@ class BooksController extends AbstractController implements CRUDInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly BookRepository $booksRepository,
-        private readonly FormHandler $formHandler
+        private readonly FormHandler $formHandler,
+        private readonly SluggerInterface $slugger
     ) {
     }
 
@@ -60,7 +63,34 @@ class BooksController extends AbstractController implements CRUDInterface
                 ]);
             }
 
-            $newBook = CreateObject::createBook($data);
+            $pictureCoverName = $data['cover'];
+
+            $newName = null;
+
+            if ($pictureCoverName) {
+                $originalName = pathinfo($pictureCoverName->getClientOriginalName(), PATHINFO_FILENAME);
+
+                $safeName = $this->slugger->slug($originalName);
+
+                $newName = $safeName.'-'.uniqid().'.'.$pictureCoverName->guessExtension();
+
+                try {
+                    $pictureCoverName->move(
+                        $this->getParameter('covers'),
+                        $newName
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', $e);
+                }
+            }
+
+            $newBook = new Book(
+                $data['name'],
+                $data['author'],
+                $data['description'],
+                $data['quantity'],
+                $newName
+            );
 
             EntityManagerCommands::persistObject($this->entityManager, $newBook);
 
@@ -112,6 +142,75 @@ class BooksController extends AbstractController implements CRUDInterface
 
     }
 
+    #[Route('/book/edit/cover/{id}', name: 'adminEditBookCover', methods: ['GET', 'POST'])]
+    public function editCover(int $id, Request $request): Response
+    {
+        try {
+            $specificBook = FindExistingObjects::findExistingObject($this->booksRepository, 'id', $id, true);
+        } catch (Exception) {
+            $this->addFlash('error', 'Przykro nam, ale podana książka nie istnieje');
+
+            return $this->redirectToRoute('adminListBooks');
+        }
+
+        $form = $this->formHandler->checkForm($request, EditCoverFileFormType::class);
+
+        if ( ($form->isSubmitted()) && ($form->isValid()) ) {
+            try {
+                CheckValue::checkValue($specificBook->getQuantity(), 0, true);
+            } catch (Exception) {
+                $this->addFlash('error', 'Ilość książek trzeba podać jako liczba większa lub równa zeru.');
+
+                return $this->render('Admin/Books/createBookForm.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+
+            $data = $form->getData();
+
+            $pictureCoverName = $data['cover'];
+
+            $oldName = $specificBook->getCover();
+
+            $newName = null;
+
+            if ($oldName != null) {
+                $fileSystem = new Filesystem();
+                $fileSystem->remove('uploads/covers/'.$oldName);
+            }
+
+            if ($pictureCoverName) {
+                $originalName = pathinfo($pictureCoverName->getClientOriginalName(), PATHINFO_FILENAME);
+
+                $safeName = $this->slugger->slug($originalName);
+
+                $newName = $safeName.'-'.uniqid().'.'.$pictureCoverName->guessExtension();
+
+                try {
+                    $pictureCoverName->move(
+                        $this->getParameter('covers'),
+                        $newName
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', $e);
+                }
+            }
+
+            $specificBook->setCover($newName);
+
+            EntityManagerCommands::persistObject($this->entityManager, $specificBook);
+
+            $this->addFlash('success', 'Książka została pomyślnie edytowana');
+
+            return $this->redirectToRoute('adminListBooks');
+        }
+
+        return $this->render('Admin/Books/editBookForm.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+    }
+
     #[Route('/book/list', name: 'adminListBooks', methods: ['GET'])]
     public function list(): Response
     {
@@ -131,6 +230,11 @@ class BooksController extends AbstractController implements CRUDInterface
 
             return $this->redirectToRoute('adminListBooks');
         }
+
+        $coverFile = $specificBook->getCover();
+
+        $fileSystem = new Filesystem();
+        $fileSystem->remove('uploads/covers/'.$coverFile);
 
         EntityManagerCommands::removeObject($this->entityManager, $specificBook);
 

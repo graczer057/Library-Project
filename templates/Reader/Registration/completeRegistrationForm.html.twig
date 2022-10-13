@@ -1,0 +1,30 @@
+{% extends 'Reader/readerBase.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success')%}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error')%}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <section>
+        <div class="container px-4">
+            <div class="row gx-4 justify-content-center">
+                <div class="col-lg-8">
+                    <h2>Dokończ rejestrację użytkownika</h2>
+                    <p class="lead">W celu korzystania z serwisu, musisz uzupełnić poniższy formularz, który dokończy rejestrację twojego konta</p>
+                    <div class="col-8 mx-auto mt-5">
+                        {{ form_start(form,{'attr':{'class':'form-material m-t-40'}}) }}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -21,10 +21,10 @@ class Reader
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userId = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $surname = null;
 
     #[ORM\Column]
@@ -36,9 +36,23 @@ class Reader
     #[ORM\OneToMany(mappedBy: 'readerId', targetEntity: Rent::class)]
     private Collection $rent;
 
-    public function __construct()
-    {
-        $this->reservation = new ArrayCollection();
+    public function __construct(
+        User $user,
+        int $reservationsQuantity
+    ){
+        $this->userId = $user;
+        $this->name = null;
+        $this->surname = null;
+        $this->reservationsQuantity = $reservationsQuantity;
+    }
+
+    public function updateReader(
+        string $name,
+        string $surname
+    ): self{
+        $this->name = $name;
+        $this->surname = $surname;
+        return $this;
     }
 
     public function getId(): ?int
