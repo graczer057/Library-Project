@@ -38,9 +38,11 @@ class HomepageController extends AbstractController implements HomepageInterface
 
         $reservations = $this->reservationsRepository->findBy(['readerId' => $reader->getId()]);
 
+        $readersReservationQuantity = $reader->getReservationsQuantity();
+
         foreach ($reservations as $reservation) {
             if ($reservation->getIsRented()) {
-                $rent[] = $this->rentsRepository->findOneBy(['reservationId' => $reservation->getId()]);
+                $rent[] = $this->rentsRepository->findOneBy(['readerId' => $reservation->getReaderId(), 'bookId' => $reservation->getBookId()]);
             } else {
                 $notRented[] = $reservation;
             }
@@ -50,7 +52,8 @@ class HomepageController extends AbstractController implements HomepageInterface
             'books' => $books,
             'reader' => $reader,
             'reservations' => $notRented ?? null,
-            'rentInfo' => $rent ?? null
+            'quantity' => $readersReservationQuantity
+            //'rentInfo' => $rent ?? null
         ]);
     }
 

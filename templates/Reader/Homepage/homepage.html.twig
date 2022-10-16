@@ -22,7 +22,8 @@
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" {% if book.cover == null %} src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" {% else %} src="{{ asset('uploads/covers/'~book.cover~'') }}" {% endif %} alt="..."/>
+                            <img class="card-img-top" {% if book.cover == null %} src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" {% else %} src="{{ asset('uploads/covers/'~book.cover~'') }}" {% endif %}
+                                 alt="..."/>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -45,50 +46,48 @@
 
                                 {% set value = false %}
                                 {% set rentDate = false %}
-                                {% for rent in rentInfo %}
-                                    {% if rent.reservationId.bookId.id == book.id %}
-                                        {% set value = true %}
-                                        {% set rentDate = rent.expireDate|date('H:i d-m-Y') %}
-                                    {% endif %}
-                                {% endfor %}
+                                {# {% for rent in rentInfo %}
+                                        {% if rent.bookId.id == book.id %}
+                                            {% set value = true %}
+                                            {% set rentDate = rent.expireDate|date('H:i d-m-Y') %}
+                                        {% endif %}
+                                    {% endfor %} #}
 
                                 {% if value == true %}
                                     <div class="text-center"><a class="btn btn-success mt-auto">Książka została
                                             wypożyczona</a>
                                         <p>Ostateczna data oddania książki: <strong>{{ rentDate }}</strong></p>
                                     </div>
-                                    {% elseif (book.quantity <= 0 or reader.reservationsQuantity == 0) and reservationStatus == false %}
-                                        <div class="text-center"><a class="btn btn-danger mt-auto">Nie można
-                                                zarezerwować</a>
-                                            <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
-                                        </div>
-                                    {% elseif reservationStatus == true %}
-                                        <div class="text-center">
-                                            <button class="btn btn-outline-danger mt-auto" id="btn_cancel{{ book.id }}" style="visibility: visible;">Anuluj rezerwację</button>
-                                            <button class="btn btn-outline-info mt-auto" id="btn_create{{ book.id }}" style="visibility: hidden;">Zarezerwuj</button>
-                                            <a id="cannotReserve" class="btn btn-danger mt-auto" style="visibility: hidden;">Nie można zarezerwować</a>
-                                            <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
-                                        </div>
-                                    {% else %}
-                                        <div class="text-center">
-                                            <button class="btn btn-outline-info mt-auto" id="btn_create{{ book.id }}" style="visibility: visible;">Zarezerwuj</button>
-                                            <button class="btn btn-outline-danger mt-auto" id="btn_cancel{{ book.id }}" style="visibility: hidden;">Anuluj rezerwację</button>
-                                            <a id="cannotReserve" class="btn btn-danger mt-auto" style="visibility: hidden;">Nie można zarezerwować</a>
-                                            <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
-                                        </div>
+                                {% elseif (book.quantity <= 0 or reader.reservationsQuantity == 0) and reservationStatus == false %}
+                                    <div class="text-center"><a class="btn btn-danger mt-auto" style="visibility: visible;" data-book="{{ book.id|serialize(format = 'json') }}">Nie można
+                                            zarezerwować</a>
+                                        <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
+                                    </div>
+                                {% elseif reservationStatus == true %}
+                                    <div class="text-center">
+                                        <button class="btn btn-outline-danger mt-auto" id="btn_cancel"
+                                                style="visibility: visible;" data-book="{{ book.id|serialize(format = 'json') }}">Anuluj rezerwację
+                                        </button>
+                                        <button class="btn btn-outline-info mt-auto" id="btn_create"
+                                                style="visibility: hidden;" data-book="{{ book.id|serialize(format = 'json') }}">Zarezerwuj
+                                        </button>
+                                        <a id="cannotReserve" class="btn btn-danger mt-auto"
+                                           style="visibility: hidden;" data-book="{{ book.id|serialize(format = 'json') }}">Nie można zarezerwować</a>
+                                        <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
+                                    </div>
+                                {% else %}
+                                    <div class="text-center">
+                                        <button class="btn btn-outline-info mt-auto" id="btn_create"
+                                                style="visibility: visible;" data-book="{{ book.id|serialize(format = 'json') }}">Zarezerwuj
+                                        </button>
+                                        <button class="btn btn-outline-danger mt-auto" id="btn_cancel"
+                                                style="visibility: hidden;" data-book="{{ book.id|serialize(format = 'json') }}">Anuluj rezerwację
+                                        </button>
+                                        <a id="cannotReserve" class="btn btn-danger mt-auto"
+                                           style="visibility: hidden;" data-book="{{ book.id|serialize(format = 'json') }}">Nie można zarezerwować</a>
+                                        <p>Liczba egzemplarzy: <strong>{{ book.quantity }}</strong></p>
+                                    </div>
                                 {% endif %}
-
-                                {#<div class="text-center">
-                                    <button class="btn btn-outline-info mt-auto" id="btn_create{{ book.id }}" style="visibility: hidden;">Zarezerwuj</button>
-                                </div>
-
-                                <div class="text-center">
-                                    <button class="btn btn-outline-danger mt-auto" id="btn_cancel{{ book.id }}" style="visibility: hidden;">Anuluj rezerwację</button>
-                                </div>
-
-                                <div class="text-center"><a id="cannotReserve" style="visibility: hidden;" class="btn btn-danger mt-auto">Nie można
-                                        zarezerwować</a>
-                                </div>#}
                             </div>
                         </div>
                     </div>
@@ -101,48 +100,95 @@
 {% endblock %}
 {% block javascripts %}
     <script>
-        let booksArray = {{ books|json_encode }};
+        let count = {{ quantity }};
 
-        let count = 0;
+        let cancel = document.getElementsByClassName("btn btn-outline-danger mt-auto");
+        let create = document.getElementsByClassName("btn btn-outline-info mt-auto");
+        let noMore = document.getElementsByClassName("btn btn-danger mt-auto");
 
-        for (let key in booksArray) {
-            let id = key;
+        let newId = [];
 
-            let cancel = document.getElementById("btn_cancel" + id);
-            let create = document.getElementById("btn_create" + id);
-
+        for (let i = 0; i < cancel.length; i++) {
+            let cancelId = JSON.parse(cancel[i].dataset.book);
             let urlCancel = "{{ path('readerCancelReservation', {'bookId': 'index'}) }}"
-            urlCancel = urlCancel.replace("index", id);
+            urlCancel = urlCancel.replace("index", cancelId);
 
-            let urlCreate = "{{ path('readerCreateReservation', {'bookId': 'index'}) }}"
-            urlCreate = urlCreate.replace("index", id);
-
-            $(cancel).on('click', function (event) {
-                //event.preventDefault();
-
+            $(cancel[i]).on('click', function (event) {
                 $.ajax({
                     url: urlCancel,
                     /*type: "delete",
                     method: "delete",*/
                     success: function (responseData) {
-                        $(cancel).css("visibility", "hidden")
-                        $(create).css("visibility", "visible")
+                        $(cancel[i]).css("visibility", "hidden")
+                        $(create[i]).css("visibility", "visible")
+                        count++
+                        if(count > 0 && count < 4){
+
+                        }
                     }
                 })
             })
-            $(create).on('click', function (event) {
-                //event.preventDefault();
+        }
 
+        for (let i = 0; i < create.length; i++) {
+            let createId = JSON.parse(create[i].dataset.book);
+            let urlCreate = "{{ path('readerCreateReservation', {'bookId': 'index'}) }}"
+            urlCreate = urlCreate.replace("index", createId);
+
+            $(create[i]).on('click', function (event) {
                 $.ajax({
                     url: urlCreate,
                     type: "post",
                     method: "post",
                     success: function (responseData) {
-                        $(cancel).css("visibility", "visible")
-                        $(create).css("visibility", "hidden")
+                        $(cancel[i]).css("visibility", "visible")
+                        $(create[i]).css("visibility", "hidden")
+                        count--
+                        newId.push(i);
+                        if (count === 0) {
+                            showBlockade();
+                        }
                     }
                 })
             })
+        }
+
+        function showBlockade()
+        {
+            let i = 0;
+            let j = 0;
+            let sthNew = [];
+
+            /*for(let i = 0; i < noMore.length; i++){
+                for(let j = 0; j < newId.length; j++){
+                    if(i !== newId[j]){
+                        sthNew.push(i);
+                    }
+                }
+            }
+
+            alert(sthNew);*/
+
+            do {
+                for(let k = 0; k < noMore.length; k++){
+                    if(k !== newId[i]){
+                        break;
+                    }
+                    sthNew.push(k)
+                }
+                if(j !== newId.length){
+                    j++;
+                }
+                i++;
+            } while(i < newId.length);
+
+            alert(sthNew)
+
+            for(let i = 0; i < sthNew.length; i++){
+                $(noMore[sthNew[i]]).css("visibility", "visible")
+                $(create[sthNew[i]]).css("visibility", "hidden")
+                $(cancel[sthNew[i]]).css("visibility", "hidden")
+            }
         }
     </script>
 {% endblock %}

@@ -18,8 +18,7 @@ class CheckRentExpireDateController extends AbstractController
 
         foreach ($rentedBooks as $rentedBook) {
             if ($rentedBook->getExpireDate()->getTimestamp() < $todayDate->getTimestamp()) {
-                $rentedBook->setIsActive(false);
-                $user = $rentedBook->getReservationId()->getReaderId()->getUserId()->setIsBanned(true);
+                $user = $rentedBook->getReaderId()->getUserId()->setIsBanned(true);
                 $entityManager->persist($rentedBook);
                 $entityManager->persist($user);
             }

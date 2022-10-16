@@ -8,6 +8,7 @@ use App\Repository\Users\ReaderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Array_;
 
 #[ORM\Entity(repositoryClass: ReaderRepository::class)]
 class Reader
@@ -17,7 +18,7 @@ class Reader
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'readers', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'reader', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userId = null;
 
@@ -111,7 +112,7 @@ class Reader
     /**
      * @return Collection<int, Reservation>
      */
-    public function getReservations(): Collection
+    /*public function getReservations(): Collection
     {
         return $this->reservation;
     }
@@ -136,7 +137,7 @@ class Reader
         }
 
         return $this;
-    }
+    }*/
 
     /**
      * @return Collection
@@ -152,5 +153,21 @@ class Reader
     public function setRent(Collection $rent): void
     {
         $this->rent = $rent;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getReservation(): Collection
+    {
+        return $this->reservation;
+    }
+
+    /**
+     * @param Collection $reservation
+     */
+    public function setReservation(Collection $reservation): void
+    {
+        $this->reservation = $reservation;
     }
 }

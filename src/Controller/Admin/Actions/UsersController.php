@@ -89,13 +89,10 @@ class UsersController extends AbstractController implements CRUDInterface
 
         $userRole = $specificUser->getRoles();
 
-        dd($specificUser->getReader());
-
         if ($userRole == ["ROLE_ADMIN"]) {
             $form = $this->formHandler->checkForm($request, EditUserFormType::class, $specificUser);
         } else {
             $form = $this->formHandler->checkForm($request, EditReaderFormType::class, $specificUser);
-            dd($specificUser->getReader());
         }
 
         if ( ($form->isSubmitted()) && ($form->isValid())) {

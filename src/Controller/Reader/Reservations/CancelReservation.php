@@ -60,11 +60,11 @@ class CancelReservation extends AbstractController
         $this->entityManager->persist($bookNewQuantity);
         $this->entityManager->flush();
 
-        return $this->redirectToRoute('readerHomepage');
+        /*return $this->redirectToRoute('readerHomepage');*/
 
-        /*return new JsonResponse([
+        return new JsonResponse([
             'status' => 'success',
             'statusMsg' => 'Właśnie usunąłeś rezerwację'
-        ],   200);*/
+        ],   200);
     }
 }
